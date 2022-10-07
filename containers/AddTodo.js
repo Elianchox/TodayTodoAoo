@@ -1,7 +1,6 @@
 import * as React from 'react'
-import {View, Text, TouchableOpacity, StyleSheet, TextInput, Switch, KeyboardAvoidingView} from 'react-native';
+import {View, Text, TouchableOpacity, StyleSheet, TextInput, Switch, KeyboardAvoidingView, BackHandler} from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useDispatch, useSelector } from 'react-redux';
 import { addTodoReducer, setTodosReducer, setTodoEditReducer } from '../context/todosSlice';
 import uuid from 'react-native-uuid';
@@ -54,6 +53,12 @@ export default function AddTodo(){
             console.error(error)
         }
     }
+
+    React.useEffect(()=>{
+        BackHandler.addEventListener('hardwareBackPress', ()=>{
+            return true;
+        });
+    }, [])
 
     return(
 

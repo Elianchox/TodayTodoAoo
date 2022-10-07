@@ -19,9 +19,10 @@ export default function Home() {
   React.useEffect(()=>{
     const getTodos = async ()=>{
       try {
-        const todos = await AsyncStorage.getItem("@Todos");
+        let todos = JSON.parse(await AsyncStorage.getItem("@Todos"));
         if (todos !== null) {
-          disPatch(setTodosReducer(JSON.parse(todos)));
+          todos = todos.sort((a, b)=>{return a.hour > b.hour})
+          disPatch(setTodosReducer(todos));
         }
       } catch (error) {
         console.error(error)
@@ -35,13 +36,19 @@ export default function Home() {
 
   const navigation = useNavigation();
 
-  const onHideBtn = ()=>{
-    // if (todoHidden) {
-    //   setData(todoData.sort((a, b)=>{return a.hour > b.hour}))
-    // }else{
-    //   setData(data.filter(item=>!item.status))
-    // }
-    // setTodoHidden(prevState=>!prevState);
+  const onHideBtn = async ()=>{
+    if (todoHidden) {
+      disPatch(hideComplitedReducer());
+      let todos = JSON.parse(await AsyncStorage.getItem("@Todos"));
+
+      if (todos) {
+        todos = todos.sort((a, b)=>{return a.hour > b.hour});
+        disPatch(setTodosReducer(todos));
+      }
+    }else{
+      disPatch(hideComplitedReducer());
+    }
+    setTodoHidden(prevState=>!prevState);
   }
 
   return (

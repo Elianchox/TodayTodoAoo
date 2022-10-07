@@ -6,10 +6,12 @@ const getTodosStorage = async (Storage)=>{
     if (listTodos) {
         listTodos = listTodos.map(todo=>{
             const dateTodo = new Date(todo.hour);
-            console.log(dateTodo)
-            console.log(new Date())
-            if (dateTodo<new Date()) {
+            const dateNow = new Date();
+            if (dateTodo<dateNow && !todo.status) {
                 todo.late = true
+            }
+            if (dateTodo.getDay() === dateNow.getDay()) {
+                todo.isToday = true;
             }
             return todo;
         });

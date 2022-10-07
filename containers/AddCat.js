@@ -26,13 +26,17 @@ export default function CatModal() {
     const onDone = async ()=>{
         try {
             const facts = await ApiCat.getCats(inputNum);
+            let hour = date;
+            if (!isToday) {
+                hour.setDate(hour.getDate()+1)
+            }
             const newTodos = facts.map(data=>{
                 return {
                     id:uuid.v4(),
                     text:data.fact,
                     status:false,
                     isToday:isToday,
-                    hour:date.toString(),
+                    hour:hour.toString(),
                     late:false
                 }
             })

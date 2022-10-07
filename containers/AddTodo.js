@@ -20,11 +20,15 @@ export default function AddTodo(){
     const disPatch = useDispatch();
 
     const addTodo = async () =>{
+        let hour = date;
+        if (!isToday) {
+            hour.setDate(hour.getDate()+1)
+        }
         const newTodo = {
             id:todoEdit.id ? todoEdit.id : uuid.v4(),
             text:name,
             status:todoEdit.status ? todoEdit.status : false,
-            hour:date.toString(),
+            hour:hour.toString(),
             isToday:isToday,
             late:false
         }

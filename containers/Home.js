@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { StyleSheet, View, Image, Text, TouchableOpacity, BackHandler, TextInput} from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, TextInput } from 'react-native';
 import TodoList from '../components/TodoList';
-import { todoData } from '../data/todos';
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -15,20 +14,22 @@ export default function Home() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
 
-  const todos = useSelector(state => state.todos.todos)
-  
+  const todos = useSelector(state => state.todos.todos);
+
   const [todoHidden, setTodoHidden] = React.useState(false);
 
-  const disPatch = useDispatch()
+  const disPatch = useDispatch();
+
   React.useEffect(()=>{
     const getTodos = async ()=>{
       try {
-        let todos = JSON.parse(await AsyncStorage.getItem("@Todos"));
-        if (todos !== null) {
-          todos = todos.sort((a, b)=>{return a.hour > b.hour})
-          disPatch(setTodosReducer(todos));
+        let listTodos = JSON.parse(await AsyncStorage.getItem("@Todos"));
+        if (listTodos !== null) {
+          listTodos = listTodos.sort((a, b)=>{return a.hour > b.hour})
+          disPatch(setTodosReducer(listTodos));
         }
       } catch (error) {
+        await AsyncStorage.clear();
         console.error(error)
       }
     }
@@ -51,36 +52,44 @@ export default function Home() {
     setTodoHidden(prevState=>!prevState);
   }
 
+  const onInput = async (text)=>{
+    let listTodos = JSON.parse(await AsyncStorage.getItem("@Todos"));
+    const searchTodos = listTodos.filter(data=>{
+      const dataText = data.text.toLowerCase();
+      return dataText.includes(text.toLowerCase())
+    })
+    disPatch(setTodosReducer(searchTodos));
+  }
+
   return (
     <View style={{...styles.container, paddingTop:insets.top, paddingBottom:insets.bottom}}>
-        {/* <Image
-            source={{uri: 'https://i.pinimg.com/736x/57/90/a3/5790a3d9421b128613dc2f053ee657e3.jpg'}}
-            style={styles.picture}
-        /> */}
         <View style={{flexDirection:'row', justifyContent:'center', alignItems:'center'}}>
           <Text style={styles.tittleHeader}>TodayTask</Text>
           <FontAwesome5 name="pencil-alt" size={32} color="black" />
         </View>
-        <View style={{justifyContent:'center', alignItems:'center', paddingTop:30, paddingBottom:20}}>
-          <TextInput
-            style={styles.inputText}
-            placeholder="Search Todo"
-            placeholderTextColor={"#00000030"}
-          />
+        <View>
+          <View style={{justifyContent:'center', alignItems:'center', paddingTop:30, paddingBottom:20, justifyContent:'center'}}>
+            <TextInput
+              style={styles.inputText}
+              placeholder="Search Todo"
+              placeholderTextColor={"#00000030"}
+              onChangeText={(text)=>onInput(text)}
+            />
+          </View>
+          <View style={{flexDirection:'row', alignItems:'center', justifyContent:'space-between'}}>
+              <Text style={styles.tittle}>Today</Text>
+              <TouchableOpacity onPress={onHideBtn}>
+                  <Text style={styles.hideCompletedBtn}>{todoHidden ? "Show Completed" : "Hide Completed"}</Text>
+              </TouchableOpacity>
+          </View>
+          <TodoList todoData={todos.filter(item=>item.isToday)}/>
+          <Text style={styles.tittle}>Tomorrow</Text>
+          <TodoList todoData={todos.filter(item=>!item.isToday)}/>
         </View>
-        <View style={{flexDirection:'row', alignItems:'center', justifyContent:'space-between'}}>
-            <Text style={styles.tittle}>Today</Text>
-            <TouchableOpacity onPress={onHideBtn}>
-                <Text style={styles.hideCompletedBtn}>{todoHidden ? "Show Completed" : "Hide Completed"}</Text>
-            </TouchableOpacity>
-        </View>
-        <TodoList todoData={todos.filter(item=>item.isToday)}/>
-        <Text style={styles.tittle}>Tomorrow</Text>
-        <TodoList todoData={todos.filter(item=>!item.isToday)}/>
-
+        
         <TouchableOpacity style={styles.btnAdd} onPress={()=>navigation.navigate("Add")}>
-            <Text style={styles.btnAdd_icon}>+</Text>
-        </TouchableOpacity>
+              <Text style={styles.btnAdd_icon}>+</Text>
+          </TouchableOpacity>
     </View>
   );
 }
@@ -88,7 +97,7 @@ export default function Home() {
 const styles = StyleSheet.create({
   tittleHeader:{
     fontWeight:'600',
-    marginTop:10,
+    marginTop:16,
     marginBottom:10,
     fontSize:48
   },
@@ -138,11 +147,14 @@ const styles = StyleSheet.create({
     left:16
   },
   inputText:{
+    paddingBottom:2,
+    paddingLeft:10,
     borderBottomColor:'#00000030',
     borderBottomWidth:2,
     width:'80%',
     fontSize:20,
-    textAlign:'center',
-    paddingBottom:4
+    justifyContent:'center',
+    alignItems:'center',
+    alignSelf:'center',
   },
 });

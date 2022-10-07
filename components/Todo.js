@@ -5,8 +5,9 @@ import moment from 'moment/moment';
 import { MaterialIcons } from '@expo/vector-icons';
 import { deleteTodoReducer } from '../context/todosSlice';
 import { useDispatch, useSelector } from 'react-redux';
-import { addTodoReducer } from '../context/todosSlice';
+import { addTodoReducer, setTodoEditReducer } from '../context/todosSlice';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
 
 export default function Todo({
     id,
@@ -16,7 +17,7 @@ export default function Todo({
     hour
 }){
 
-    const [hourLocal, setLocalHour] = React.useState(new Date(hour));
+    const navigation = useNavigation();
     const listTodo = useSelector(data => data.todos.todos)
     const disPatch = useDispatch();
 
@@ -32,7 +33,15 @@ export default function Todo({
     }
 
     const onTodo = ()=>{
-        console.log('edit')
+        disPatch(setTodoEditReducer({
+            id,
+            text,
+            status,
+            isToday,
+            hour
+        }))
+
+        navigation.navigate("Add");
     }
 
     return(
@@ -45,13 +54,13 @@ export default function Todo({
                     isToday={isToday}
                     hour={hour}
                 />
-                <View>
+                <TouchableOpacity style={{width:'80%'}} onPress={onTodo}>
                     <Text style={status ? [styles.text, styles.statusTrue] : styles.text}>{text}</Text>
-                    <Text style={status ? [styles.hour, styles.statusTrue] : styles.hour}>{moment(hourLocal).format('LT')}</Text>
-                </View>
+                    <Text style={status ? [styles.hour, styles.statusTrue] : styles.hour}>{moment(new Date(hour)).format('LT')}</Text>
+                </TouchableOpacity>
             </View>
             <TouchableOpacity onPress={onDelete}>
-                <MaterialIcons name="delete-outline" size={28} color='#F43F3F' style={{}}></MaterialIcons>
+                <MaterialIcons name="delete-outline" size={28} color='#F43F3F'></MaterialIcons>
             </TouchableOpacity>
         </View>
     )

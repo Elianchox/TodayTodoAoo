@@ -10,6 +10,7 @@ export default function TodoList({
             data={todoData}
             keyExtractor={item => item.id.toString()}
             renderItem={({item}) => <Todo {...item}/>}
+            style={{paddingBottom:50}}
         />
     )
 }

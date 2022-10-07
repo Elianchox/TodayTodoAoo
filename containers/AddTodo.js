@@ -3,20 +3,16 @@ import {View, Text, TouchableOpacity, StyleSheet, TextInput, Switch} from 'react
 import DateTimePicker from '@react-native-community/datetimepicker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useDispatch, useSelector } from 'react-redux';
-import { addTodoReducer } from '../context/todosSlice';
+import { addTodoReducer, setTodosReducer, setTodoEditReducer } from '../context/todosSlice';
 import uuid from 'react-native-uuid';
 import { useNavigation } from '@react-navigation/native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
-export default function AddTodo({
-    idTodo,
-    nameTodo,
-    dateTodo,
-    isTodayTodo
-}){
-    const [name, setName] = React.useState(nameTodo ? nameTodo : "");
-    const [date, setDate] = React.useState(dateTodo ? dateTodo : new Date());
-    const [isToday, setIsToday] = React.useState(isTodayTodo ? isTodayTodo : false);
+export default function AddTodo(){
+    const todoEdit = useSelector(state => state.todos.todoEdit);
+    const [name, setName] = React.useState(todoEdit.text ? todoEdit.text : "");
+    const [date, setDate] = React.useState(todoEdit.hour ? new Date(todoEdit.hour) : new Date());
+    const [isToday, setIsToday] = React.useState(todoEdit.isToday ? todoEdit.isToday : false);
     const navigation = useNavigation();
 
     const listTodo = useSelector(data => data.todos.todos)
@@ -24,17 +20,29 @@ export default function AddTodo({
 
     const addTodo = async () =>{
         const newTodo = {
-            id:idTodo ? idTodo : uuid.v4(),
+            id:todoEdit.id ? todoEdit.id : uuid.v4(),
             text:name,
-            status:false,
+            status:todoEdit.status ? todoEdit.status : false,
             hour:date.toString(),
             isToday:isToday,
         }
 
         try {
-            const newListTodo = [...listTodo, newTodo];
-            await AsyncStorage.setItem("@Todos", JSON.stringify(newListTodo));
-            disPatch(addTodoReducer(newTodo));
+            if (todoEdit.id) {
+                const newListTodo = listTodo.map(data=>{
+                    if (data.id === todoEdit.id) {
+                        data = newTodo;
+                    }
+                    return data;
+                });
+                await AsyncStorage.setItem("@Todos", JSON.stringify(newListTodo));
+                disPatch(setTodosReducer(newListTodo));
+            }else{
+                const newListTodo = [...listTodo, newTodo];
+                await AsyncStorage.setItem("@Todos", JSON.stringify(newListTodo));
+                disPatch(addTodoReducer(newTodo));
+            }
+            disPatch(setTodoEditReducer({}))
             navigation.goBack();
         } catch (error) {
             console.error(error)
@@ -50,6 +58,7 @@ export default function AddTodo({
             <View style={styles.inputContainer}>
                 <Text style={styles.inputLabel}>Name</Text>
                 <TextInput
+                    value={name}
                     style={styles.inputText}
                     placeholder="Name Task"
                     placeholderTextColor={"#00000030"}

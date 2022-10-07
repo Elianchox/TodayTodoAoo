@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StyleSheet, Text, TextInput, View, Switch, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, TextInput, View, Switch, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { ApiCat } from '../services/Cat';
@@ -8,6 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useDispatch, useSelector } from 'react-redux';
 import { setTodosReducer } from '../context/todosSlice';
 import { useNavigation } from '@react-navigation/native';
+import { setTodosStorage } from '../services/Storage';
 
 export default function CatModal() {
 
@@ -31,13 +32,14 @@ export default function CatModal() {
                     text:data.fact,
                     status:false,
                     isToday:isToday,
-                    hour:date.toString()
+                    hour:date.toString(),
+                    late:false
                 }
             })
 
             console.log(newTodos)
             const newListTodo = [...listTodo, ...newTodos];
-            await AsyncStorage.setItem("@Todos", JSON.stringify(newListTodo));
+            await setTodosStorage("@Todos", JSON.stringify(newListTodo));
             disPatch(setTodosReducer(newListTodo));
             navigation.navigate("Home")
         } catch (error) {
@@ -81,10 +83,12 @@ export default function CatModal() {
                     onValueChange={(value)=>{ setIsToday(value)}}
                 />
             </View>
-            <TouchableOpacity style={styles.btn} onPress={onDone}>
-                <Text style={{color:'white'}} >Done</Text>
-            </TouchableOpacity>
-            <Text style={{color:'#00000070', textAlign:'center'}} >If you disable Today, the task will be considered as tomorrow</Text>
+            <KeyboardAvoidingView behavior='position' keyboardVerticalOffset={120}>
+                <TouchableOpacity style={styles.btn} onPress={onDone}>
+                    <Text style={{color:'white'}} >Done</Text>
+                </TouchableOpacity>
+                <Text style={{color:'#00000070', textAlign:'center'}} >If you disable Today, the task will be considered as tomorrow</Text>
+            </KeyboardAvoidingView>
         </KeyboardAwareScrollView>
     )
 }

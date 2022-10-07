@@ -4,6 +4,7 @@ import { Entypo } from '@expo/vector-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { updateTodoStatusReducer } from '../context/todosSlice';
+import { setTodosStorage } from '../services/Storage';
 
 export default function Checkbox({
     id,
@@ -14,10 +15,10 @@ export default function Checkbox({
     const disPatch = useDispatch();
     const listTodos = useSelector(state => state.todos.todos);
 
-    const onCheckbox = ()=>{
+    const onCheckbox = async ()=>{
         try {
             disPatch(updateTodoStatusReducer({id, status}));
-            AsyncStorage.setItem("@Todos", JSON.stringify(
+            await setTodosStorage("@Todos", JSON.stringify(
                 listTodos.map(item =>{
                     if (item.id === id) {
                         return {...item, status: !item.status};

@@ -8,13 +8,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setTodoEditReducer } from '../context/todosSlice';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
+import { setTodosStorage } from '../services/Storage';
 
 export default function Todo({
     id,
     text,
     status,
     isToday,
-    hour
+    hour,
+    late
 }){
 
     const navigation = useNavigation();
@@ -24,7 +26,7 @@ export default function Todo({
     const onDelete = async ()=>{
         disPatch(deleteTodoReducer(id));
         try {
-            await AsyncStorage.setItem("@Todos", JSON.stringify(
+            await setTodosStorage("@Todos", JSON.stringify(
                 listTodo.filter(item => item.id !== id)
             ));
         } catch (error) {
@@ -56,7 +58,12 @@ export default function Todo({
                 />
                 <TouchableOpacity style={{width:'80%'}} onPress={onTodo}>
                     <Text style={status ? [styles.text, styles.statusTrue] : styles.text}>{text}</Text>
-                    <Text style={status ? [styles.hour, styles.statusTrue] : styles.hour}>{moment(new Date(hour)).format('LT')}</Text>
+                    <Text 
+                        style={{
+                            ...(status ? [styles.hour, styles.statusTrue] : styles.hour),
+                            ...((late && !status) && {color:'#F43F3F', textDecorationLine: 'line-through',} )
+                        }}
+                    >{late ? "Task not finished on time" : moment(new Date(hour)).format('LT')}</Text>
                 </TouchableOpacity>
             </View>
             <TouchableOpacity onPress={onDelete}>

@@ -7,6 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {setTodosReducer, hideComplitedReducer} from '../context/todosSlice';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { getTodosStorage } from '../services/Storage';
 
 
 export default function Home() {
@@ -23,7 +24,7 @@ export default function Home() {
   React.useEffect(()=>{
     const getTodos = async ()=>{
       try {
-        let listTodos = JSON.parse(await AsyncStorage.getItem("@Todos"));
+        let listTodos = await getTodosStorage("@Todos");
         if (listTodos !== null) {
           listTodos = listTodos.sort((a, b)=>{return a.hour > b.hour})
           disPatch(setTodosReducer(listTodos));
@@ -40,7 +41,7 @@ export default function Home() {
   const onHideBtn = async ()=>{
     if (todoHidden) {
       disPatch(hideComplitedReducer());
-      let todos = JSON.parse(await AsyncStorage.getItem("@Todos"));
+      let todos = await getTodosStorage("@Todos");
 
       if (todos) {
         todos = todos.sort((a, b)=>{return a.hour > b.hour});
@@ -53,16 +54,12 @@ export default function Home() {
   }
 
   const onInput = async (text)=>{
-    let listTodos = JSON.parse(await AsyncStorage.getItem("@Todos"));
+    let listTodos = await getTodosStorage("@Todos");
     const searchTodos = listTodos.filter(data=>{
       const dataText = data.text.toLowerCase();
       return dataText.includes(text.toLowerCase())
     })
     disPatch(setTodosReducer(searchTodos));
-  }
-
-  const onBtnCat = ()=>{
-    console.log('Miau')
   }
 
   return (

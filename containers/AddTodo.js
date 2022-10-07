@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {View, Text, TouchableOpacity, StyleSheet, TextInput, Switch} from 'react-native';
+import {View, Text, TouchableOpacity, StyleSheet, TextInput, Switch, KeyboardAvoidingView} from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useDispatch, useSelector } from 'react-redux';
@@ -7,6 +7,7 @@ import { addTodoReducer, setTodosReducer, setTodoEditReducer } from '../context/
 import uuid from 'react-native-uuid';
 import { useNavigation } from '@react-navigation/native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { setTodosStorage } from '../services/Storage';
 
 export default function AddTodo(){
     const todoEdit = useSelector(state => state.todos.todoEdit);
@@ -25,6 +26,7 @@ export default function AddTodo(){
             status:todoEdit.status ? todoEdit.status : false,
             hour:date.toString(),
             isToday:isToday,
+            late:false
         }
 
         try {
@@ -35,11 +37,11 @@ export default function AddTodo(){
                     }
                     return data;
                 });
-                await AsyncStorage.setItem("@Todos", JSON.stringify(newListTodo));
+                await setTodosStorage("@Todos", JSON.stringify(newListTodo));
                 disPatch(setTodosReducer(newListTodo));
             }else{
                 const newListTodo = [...listTodo, newTodo];
-                await AsyncStorage.setItem("@Todos", JSON.stringify(newListTodo));
+                await setTodosStorage("@Todos", JSON.stringify(newListTodo));
                 disPatch(addTodoReducer(newTodo));
             }
             disPatch(setTodoEditReducer({}))
@@ -84,11 +86,12 @@ export default function AddTodo(){
                     onValueChange={(value)=>{ setIsToday(value)}}
                 />
             </View>
-
-            <TouchableOpacity style={styles.btn} onPress={addTodo}>
-                <Text style={{color:'white'}} >Done</Text>
-            </TouchableOpacity>
-            <Text style={{color:'#00000070', textAlign:'center'}} >If you disable Today, the task will be considered as tomorrow</Text>
+            <KeyboardAvoidingView behavior='position' keyboardVerticalOffset={120}>
+                <TouchableOpacity style={styles.btn} onPress={addTodo}>
+                    <Text style={{color:'white'}} >Done</Text>
+                </TouchableOpacity>
+                <Text style={{color:'#00000070', textAlign:'center'}} >If you disable Today, the task will be considered as tomorrow</Text>
+            </KeyboardAvoidingView>
 
         </KeyboardAwareScrollView>
     )

@@ -1,69 +1,66 @@
-import * as React from 'react'
-import {View, Text, TouchableOpacity, StyleSheet, TextInput, Switch} from 'react-native';
+import * as React from 'react';
+import { StyleSheet, Text, TextInput, View, Switch, TouchableOpacity } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { ApiCat } from '../services/Cat';
+import uuid from 'react-native-uuid';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useDispatch, useSelector } from 'react-redux';
-import { addTodoReducer, setTodosReducer, setTodoEditReducer } from '../context/todosSlice';
-import uuid from 'react-native-uuid';
+import { setTodosReducer } from '../context/todosSlice';
 import { useNavigation } from '@react-navigation/native';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
-export default function AddTodo(){
-    const todoEdit = useSelector(state => state.todos.todoEdit);
-    const [name, setName] = React.useState(todoEdit.text ? todoEdit.text : "");
-    const [date, setDate] = React.useState(todoEdit.hour ? new Date(todoEdit.hour) : new Date());
-    const [isToday, setIsToday] = React.useState(todoEdit.isToday ? todoEdit.isToday : false);
-    const navigation = useNavigation();
+export default function CatModal() {
 
+    const [inputNum, setInputNum] = React.useState("");
+    const [date, setDate] = React.useState(new Date());
+    const [isToday, setIsToday] = React.useState(false);
     const listTodo = useSelector(data => data.todos.todos)
     const disPatch = useDispatch();
+    const navigation = useNavigation();
 
-    const addTodo = async () =>{
-        const newTodo = {
-            id:todoEdit.id ? todoEdit.id : uuid.v4(),
-            text:name,
-            status:todoEdit.status ? todoEdit.status : false,
-            hour:date.toString(),
-            isToday:isToday,
-        }
+    const onInput = (text)=>{
+        setInputNum(text.replace(/[a-z]/gi, ""))
+    }
 
+    const onDone = async ()=>{
         try {
-            if (todoEdit.id) {
-                const newListTodo = listTodo.map(data=>{
-                    if (data.id === todoEdit.id) {
-                        data = newTodo;
-                    }
-                    return data;
-                });
-                await AsyncStorage.setItem("@Todos", JSON.stringify(newListTodo));
-                disPatch(setTodosReducer(newListTodo));
-            }else{
-                const newListTodo = [...listTodo, newTodo];
-                await AsyncStorage.setItem("@Todos", JSON.stringify(newListTodo));
-                disPatch(addTodoReducer(newTodo));
-            }
-            disPatch(setTodoEditReducer({}))
-            navigation.goBack();
+            const facts = await ApiCat.getCats(inputNum);
+            const newTodos = facts.map(data=>{
+                return {
+                    id:uuid.v4(),
+                    text:data.fact,
+                    status:false,
+                    isToday:isToday,
+                    hour:date.toString()
+                }
+            })
+
+            console.log(newTodos)
+            const newListTodo = [...listTodo, ...newTodos];
+            await AsyncStorage.setItem("@Todos", JSON.stringify(newListTodo));
+            disPatch(setTodosReducer(newListTodo));
+            navigation.navigate("Home")
         } catch (error) {
             console.error(error)
         }
     }
 
     return(
-
         <KeyboardAwareScrollView style={styles.container}>
-
-            <Text style={styles.tittle}>Add Todo</Text>
-
+            <View>
+                <Text style={styles.tittle}>Add Facts Cat</Text>
+            </View>
             <View style={styles.inputContainer}>
-                <Text style={styles.inputLabel}>Name</Text>
+                <Text style={styles.inputLabel}>Amount Facts</Text>
                 <TextInput
-                    value={name}
+                    keyboardType='numeric'
+                    maxLength={3}
+                    value={inputNum}
                     style={styles.inputText}
-                    placeholder="Name Task"
+                    placeholder="Num Facts"
                     placeholderTextColor={"#00000030"}
-                    onChangeText={(text)=>{setName(text)}}
-                />
+                    onChangeText={(text)=>onInput(text)}
+                ></TextInput>
             </View>
 
             <View style={styles.inputContainer}>
@@ -84,12 +81,10 @@ export default function AddTodo(){
                     onValueChange={(value)=>{ setIsToday(value)}}
                 />
             </View>
-
-            <TouchableOpacity style={styles.btn} onPress={addTodo}>
+            <TouchableOpacity style={styles.btn} onPress={onDone}>
                 <Text style={{color:'white'}} >Done</Text>
             </TouchableOpacity>
             <Text style={{color:'#00000070', textAlign:'center'}} >If you disable Today, the task will be considered as tomorrow</Text>
-
         </KeyboardAwareScrollView>
     )
 }
@@ -108,18 +103,20 @@ const styles = StyleSheet.create({
     },
     inputContainer:{
         flexDirection:'row',
-        justifyContent:'space-between',
-        paddingBottom:35
+        paddingBottom:35,
+        justifyContent:'space-between'
     },
     inputLabel:{
         fontSize:20,
         fontWeight:'600',
-        lineHeight:24
+        lineHeight:24,
+        paddingRight:20
     },
     inputText:{
         borderBottomColor:'#00000030',
         borderBottomWidth:1,
-        width:'80%'
+        width:'30%',
+        paddingLeft:4,
     },
     btn:{
         marginTop:'100%',
@@ -131,4 +128,4 @@ const styles = StyleSheet.create({
         justifyContent:'center',
         alignItems:'center'
     }
-})
+});

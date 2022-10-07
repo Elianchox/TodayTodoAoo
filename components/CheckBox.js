@@ -7,10 +7,8 @@ import { updateTodoStatusReducer } from '../context/todosSlice';
 
 export default function Checkbox({
     id,
-    text,
     status,
     isToday,
-    hour
 }){
 
     const disPatch = useDispatch();

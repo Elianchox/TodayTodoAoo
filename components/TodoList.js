@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FlatList, Text } from 'react-native'
+import { FlatList } from 'react-native'
 import Todo from './Todo';
 
 export default function TodoList({
@@ -10,7 +10,7 @@ export default function TodoList({
             data={todoData}
             keyExtractor={item => item.id.toString()}
             renderItem={({item}) => <Todo {...item}/>}
-            style={{paddingBottom:50}}
+            style={{paddingBottom:50, height:'30%'}}
         />
     )
 }

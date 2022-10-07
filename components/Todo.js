@@ -5,7 +5,7 @@ import moment from 'moment/moment';
 import { MaterialIcons } from '@expo/vector-icons';
 import { deleteTodoReducer } from '../context/todosSlice';
 import { useDispatch, useSelector } from 'react-redux';
-import { addTodoReducer, setTodoEditReducer } from '../context/todosSlice';
+import { setTodoEditReducer } from '../context/todosSlice';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 

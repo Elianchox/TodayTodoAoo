@@ -61,6 +61,10 @@ export default function Home() {
     disPatch(setTodosReducer(searchTodos));
   }
 
+  const onBtnCat = ()=>{
+    console.log('Miau')
+  }
+
   return (
     <View style={{...styles.container, paddingTop:insets.top, paddingBottom:insets.bottom}}>
         <View style={{flexDirection:'row', justifyContent:'center', alignItems:'center'}}>
@@ -88,12 +92,16 @@ export default function Home() {
         </View>
         
         <TouchableOpacity style={styles.btnAdd} onPress={()=>navigation.navigate("Add")}>
-              <Text style={styles.btnAdd_icon}>+</Text>
-          </TouchableOpacity>
+          <Text style={styles.btnAdd_icon}>+</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.btnAddCats} onPress={()=>navigation.navigate("Cat")}>
+            <FontAwesome5 style={styles.btnAddCatsIcon} name="cat" color="white" />
+        </TouchableOpacity>
     </View>
   );
 }
-
+// https://catfact.ninja/facts?limit=
 const styles = StyleSheet.create({
   tittleHeader:{
     fontWeight:'600',
@@ -126,7 +134,7 @@ const styles = StyleSheet.create({
     width:56,
     height:56,
     position:'absolute',
-    bottom:50,
+    bottom:40,
     right:20,
     backgroundColor:'#000',
     borderRadius:28,
@@ -157,4 +165,28 @@ const styles = StyleSheet.create({
     alignItems:'center',
     alignSelf:'center',
   },
+  btnAddCats:{
+    width:56,
+    height:56,
+    position:'absolute',
+    bottom:40,
+    right:90,
+    backgroundColor:'#000',
+    borderRadius:28,
+    shadowColor:'#000',
+    shadowOffset:{
+      width:0,
+      height:2
+    },
+    shadowOpacity:.5,
+    shadowRadius:5,
+    elevation:5,
+  },
+  btnAddCatsIcon:{
+    color:'#fff',
+    position: 'absolute',
+    fontSize:24,
+    top:13,
+    left:16
+  }
 });

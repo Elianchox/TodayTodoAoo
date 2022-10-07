@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { View, StyleSheet, Text, Animated, BackHandler } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { View, StyleSheet, Text, BackHandler } from 'react-native';
 import LottieView from 'lottie-react-native';
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesome5 } from '@expo/vector-icons';

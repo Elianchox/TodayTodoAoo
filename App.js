@@ -3,7 +3,8 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import AddTodo from "./containers/AddTodo";
 import Home from "./containers/Home";
-import Splash from './containers/Splash'
+import Splash from './containers/Splash';
+import Cat from './containers/AddCat';
 import { store } from './context/storage'
 import { Provider } from 'react-redux';
 import { BackHandler } from "react-native";
@@ -34,9 +35,15 @@ export default function App() {
             component={AddTodo}
             options={{presentation:"modal"}}
           />
+
+          <Stack.Screen
+            name="Cat"
+            component={Cat}
+            options={{presentation:"modal"}}
+          />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>
-    
+
   );
 }

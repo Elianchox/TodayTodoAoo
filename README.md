@@ -12,12 +12,12 @@ npm i -g expo-cli
 
 ###Instalar proyecto
 
-_Primero debemos clonar el repositurio en nuestro equipo local_
+_Primero debemos clonar el repositurio en nuestro equipo local._
 ```
 git clone https://github.com/Elianchox/TodayTodoApp.git
 ```
 
-_Luego entraremos al repositorio_
+_Luego entraremos al repositorio._
 ```
 cd TodayTodoApp-master
 ```
@@ -32,5 +32,5 @@ _Luego de terminar la instalacion de dependencias ya podemos iniciar la plicacio
 expo start
 ```
 
-## Abrir el proyecto en tu celular
-_Debes tener instalada la aplicadion Expo Go en tu dispositivo mobil, luedo escanearas el codigo QR que te arrojara la terminal una vez hallas inicializado la aplicacion, esta te redigira a la app y cargara la aplicacion TodayTodoApp_
+## Abrir el proyecto en tu movil.
+_Debes tener instalada la aplicadion Expo Go en tu dispositivo movil, luedo escanearas el codigo QR que te arrojara la terminal una vez hallas inicializado la aplicacion, esta te redigira a la app y cargara la aplicacion TodayTodoApp_

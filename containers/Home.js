@@ -2,22 +2,46 @@ import * as React from 'react';
 import { StyleSheet, View, Image, Text, TouchableOpacity } from 'react-native';
 import TodoList from '../components/TodoList';
 import { todoData } from '../data/todos';
+import { useNavigation } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {setTodosReducer, hideComplitedReducer} from '../context/todosSlice'
 
 export default function Home() {
 
-  const [data, setData] = React.useState(
-    todoData.sort((a, b)=>{return a.hour > b.hour})
-  );
+  const todos = useSelector(state => state.todos.todos)
+
+  // const [data, setData] = React.useState(
+  //   todoData.sort((a, b)=>{return a.hour > b.hour})
+  // );
+
+  const disPatch = useDispatch()
+  React.useEffect(()=>{
+    const getTodos = async ()=>{
+      try {
+        const todos = await AsyncStorage.getItem("@Todos");
+        if (todos !== null) {
+          disPatch(setTodosReducer(JSON.parse(todos)));
+        }
+      } catch (error) {
+        console.error(error)
+      }
+    }
+
+    getTodos(getTodos);
+  }, [])
 
   const [todoHidden, setTodoHidden] = React.useState(false);
 
+  const navigation = useNavigation();
+
   const onHideBtn = ()=>{
-    if (todoHidden) {
-      setData(todoData.sort((a, b)=>{return a.hour > b.hour}))
-    }else{
-      setData(data.filter(item=>!item.status))
-    }
-    setTodoHidden(prevState=>!prevState);
+    // if (todoHidden) {
+    //   setData(todoData.sort((a, b)=>{return a.hour > b.hour}))
+    // }else{
+    //   setData(data.filter(item=>!item.status))
+    // }
+    // setTodoHidden(prevState=>!prevState);
   }
 
   return (
@@ -32,11 +56,11 @@ export default function Home() {
                 <Text style={styles.hideCompletedBtn}>{todoHidden ? "Show Completed" : "Hide Completed"}</Text>
             </TouchableOpacity>
         </View>
-        <TodoList todoData={data.filter(item=>item.isToday)}/>
+        <TodoList todoData={todos.filter(item=>item.isToday)}/>
         <Text style={styles.tittle}>Tomorrow</Text>
-        <TodoList todoData={data.filter(item=>!item.isToday)}/>
+        <TodoList todoData={todos.filter(item=>!item.isToday)}/>
 
-        <TouchableOpacity style={styles.btnAdd}>
+        <TouchableOpacity style={styles.btnAdd} onPress={()=>navigation.navigate("Add")}>
             <Text style={styles.btnAdd_icon}>+</Text>
         </TouchableOpacity>
     </View>

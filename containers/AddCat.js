@@ -57,7 +57,7 @@ export default function CatModal() {
                 <Text style={styles.tittle}>Add Facts Cat</Text>
             </View>
             <View style={styles.inputContainer}>
-                <Text style={styles.inputLabel}>Amount Facts</Text>
+                <Text style={styles.inputLabel}>Amount Sentences</Text>
                 <TextInput
                     keyboardType='numeric'
                     maxLength={3}

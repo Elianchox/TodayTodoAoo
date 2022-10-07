@@ -34,11 +34,11 @@ export default function Home() {
         console.error(error)
       }
     }
-    
+
     getTodos();
     setInterval(() => {
       getTodos();
-    }, 60000);
+    }, 10000);
   }, [])
 
   const onHideBtn = async ()=>{

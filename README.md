@@ -33,4 +33,4 @@ expo start
 ```
 
 ## Abrir el proyecto en tu movil.
-_Debes tener instalada la aplicadion Expo Go en tu dispositivo movil, luedo escanearas el codigo QR que te arrojara la terminal una vez hallas inicializado la aplicacion, esta te redigira a la app y cargara la aplicacion TodayTodoApp_
+_Debes tener instalada la aplicadion Expo Go en tu dispositivo movil, luedo escanearas el codigo QR que te arrojara la terminal una vez hallas inicializado la aplicacion, esta te redigira a la app y cargara la aplicacion TodayTodoApp. Tambien puedes abrirlo en el emulador de Android o IOS_

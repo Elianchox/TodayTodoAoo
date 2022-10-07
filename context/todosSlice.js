@@ -22,6 +22,14 @@ export const todoSlice = createSlice({
                 return item;
             });
         },
+        updateTodoReducer:(state, action)=>{
+            state.todos = state.todos.map(item=>{
+                if (item.id === action.payload.id) {
+                    item = {...action.payload}
+                }
+                return item;
+            });
+        },
         deleteTodoReducer:(state, action)=>{
             const id = action.payload;
             state.todos = state.todos.filter(item => item.id !== id);

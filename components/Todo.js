@@ -31,9 +31,13 @@ export default function Todo({
         }
     }
 
+    const onTodo = ()=>{
+        console.log('edit')
+    }
+
     return(
         <View style={styles.container}>
-            <View style={{flexDirection:'row'}}>
+            <View style={{flexDirection:'row', alignItems:'center'}}>
                 <Checkbox
                     id={id}
                     text={text}
@@ -47,7 +51,7 @@ export default function Todo({
                 </View>
             </View>
             <TouchableOpacity onPress={onDelete}>
-                <MaterialIcons name="delete-outline" size={24} color='#73737380' style={{}}></MaterialIcons>
+                <MaterialIcons name="delete-outline" size={28} color='#F43F3F' style={{}}></MaterialIcons>
             </TouchableOpacity>
         </View>
     )
@@ -61,7 +65,7 @@ const styles = StyleSheet.create({
         justifyContent:'space-between'
     },
     text:{
-        fontSize:15,
+        fontSize:18,
         fontWeight:'500',
         color:'#767676',
     },

@@ -6,11 +6,17 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addTodoReducer } from '../context/todosSlice';
 import uuid from 'react-native-uuid';
 import { useNavigation } from '@react-navigation/native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
-export default function AddTodo(){
-    const [name, setName] = React.useState("");
-    const [date, setDate] = React.useState(new Date());
-    const [isToday, setIsToday] = React.useState(false);
+export default function AddTodo({
+    idTodo,
+    nameTodo,
+    dateTodo,
+    isTodayTodo
+}){
+    const [name, setName] = React.useState(nameTodo ? nameTodo : "");
+    const [date, setDate] = React.useState(dateTodo ? dateTodo : new Date());
+    const [isToday, setIsToday] = React.useState(isTodayTodo ? isTodayTodo : false);
     const navigation = useNavigation();
 
     const listTodo = useSelector(data => data.todos.todos)
@@ -18,7 +24,7 @@ export default function AddTodo(){
 
     const addTodo = async () =>{
         const newTodo = {
-            id:uuid.v4(),
+            id:idTodo ? idTodo : uuid.v4(),
             text:name,
             status:false,
             hour:date.toString(),
@@ -36,7 +42,8 @@ export default function AddTodo(){
     }
 
     return(
-        <View style={styles.container}>
+        
+        <KeyboardAwareScrollView style={styles.container}>
 
             <Text style={styles.tittle}>Add Todo</Text>
 
@@ -74,7 +81,7 @@ export default function AddTodo(){
             </TouchableOpacity>
             <Text style={{color:'#00000070', textAlign:'center'}} >If you disable Today, the task will be considered as tomorrow</Text>
 
-        </View>
+        </KeyboardAwareScrollView>
     )
 }
 

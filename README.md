@@ -19,7 +19,7 @@ git clone https://github.com/Elianchox/TodayTodoApp.git
 
 _Luego entraremos al repositorio._
 ```
-cd TodayTodoApp-master
+cd TodayTodoApp
 ```
 
 _Una vez dentro del directorio, procedemos a instalar las dependencias en npm:_
